@@ -10,9 +10,14 @@ class CommentRepository(private val commentDao: CommentDao, private val apiServi
     fun getComments(postId: Int): LiveData<List<CommentEntity>> = commentDao.getComments(postId)
 
     suspend fun refreshComments(postId: Int) {
-        val commentsList = apiService.getComments(postId).map {
+        val commentsList = apiService.getCommentsForPost(postId).map {
             CommentEntity(it.id, it.postId, it.name, it.email, it.body)
         }
         commentDao.insertComments(commentsList)
+    }
+
+    // 根据 postId 获取评论
+    suspend fun fetchCommentsForPost(postId: Int): LiveData<List<CommentEntity>> {
+        return commentDao.getComments(postId)
     }
 }

@@ -9,8 +9,15 @@ class PostRepository(private val postDao: PostDao, private val apiService: ApiSe
 
     val posts: LiveData<List<PostEntity>> = postDao.getPosts()
 
-    suspend fun refreshPosts() {
+    suspend fun refreshPosts() : List<PostEntity> {
         val postList = apiService.getPosts().map { PostEntity(it.id, it.title, it.body) }
         postDao.insertPosts(postList)
+        return postList
     }
+
+    // Get data from local database
+    fun fetchPostsFromLocal(): LiveData<List<PostEntity>> {
+        return postDao.getPosts()
+    }
+
 }

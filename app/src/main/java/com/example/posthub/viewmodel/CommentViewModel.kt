@@ -8,11 +8,13 @@ import com.example.posthub.data.repository.CommentRepository
 import kotlinx.coroutines.launch
 
 class CommentViewModel(private val repository: CommentRepository) : ViewModel() {
-    fun getComments(postId: Int): LiveData<List<CommentEntity>>? {
-        return null;
+    fun getComments(postId: Int): LiveData<List<CommentEntity>> {
+        return repository.getComments(postId)
     }
 
     fun refreshComments(postId: Int) {
-
+        viewModelScope.launch {
+            repository.refreshComments(postId)
+        }
     }
 }

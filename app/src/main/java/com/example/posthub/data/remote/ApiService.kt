@@ -9,6 +9,9 @@ interface ApiService {
     @GET("posts")
     suspend fun getPosts(): List<Post>
 
+    @GET("comments")
+    suspend fun getComments(): List<Comment>
+
     @GET("posts/{postId}/comments")
-    suspend fun getComments(@Path("postId") postId: Int): List<Comment>
+    suspend fun getCommentsForPost(@Path("postId") postId: Int): List<Comment>
 }

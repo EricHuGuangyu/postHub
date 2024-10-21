@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp") version "1.9.0-1.0.11"
+    //id("androidx.navigation.safeargs.kotlin") version "2.8.3"
 }
 
 android {
@@ -39,13 +40,15 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes.add("/META-INF/AL2.0")
+            excludes.add("/META-INF/LGPL2.1")
         }
     }
 }
@@ -64,7 +67,10 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation (libs.retrofit2.retrofit)
     implementation (libs.converter.gson)
-    ksp("androidx.room:room-compiler:2.5.0") // 使用 KSP 来处理 Room 注解
+    implementation(libs.androidx.recyclerview)
+    implementation (libs.androidx.navigation.fragment.ktx)
+    ksp("androidx.room:room-compiler:2.5.0")
+    implementation(libs.androidx.navigation.safe.args.gradle.plugin)
     implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
