@@ -11,6 +11,6 @@ interface CommentDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertComments(comments: List<CommentEntity>)
 
-    @Query("SELECT * FROM CommentEntity WHERE postId = :postId")
+    @Query("SELECT * FROM comments WHERE postId = :postId")
     fun getComments(postId: Int): LiveData<List<CommentEntity>>
 }

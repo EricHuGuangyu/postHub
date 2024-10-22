@@ -7,10 +7,12 @@ import com.example.posthub.data.local.CommentEntity
 import com.example.posthub.databinding.ItemCommentBinding
 
 class CommentAdapter(
-    private val commentList: List<CommentEntity>
+    private var commentList: List<CommentEntity>,
+    private val fullCommentList: List<CommentEntity>
 ) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
 
-    inner class CommentViewHolder(private val binding: ItemCommentBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class CommentViewHolder(private val binding: ItemCommentBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(comment: CommentEntity) {
             binding.nameTextView.text = comment.name
             binding.emailTextView.text = comment.email
@@ -29,5 +31,19 @@ class CommentAdapter(
 
     override fun getItemCount(): Int {
         return commentList.size
+    }
+
+    fun filter(query: String) {
+        // If search view is empty return full list
+        commentList = if (query.isEmpty()) {
+            fullCommentList
+        } else {
+            // filter with name and body
+            fullCommentList.filter { comment ->
+                comment.name.contains(query, ignoreCase = true) ||
+                        comment.body.contains(query, ignoreCase = true)
+            }
+        }
+        notifyDataSetChanged()
     }
 }

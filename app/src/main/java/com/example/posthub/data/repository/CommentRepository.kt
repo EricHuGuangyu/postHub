@@ -4,11 +4,13 @@ import androidx.lifecycle.LiveData
 import com.example.posthub.data.local.CommentDao
 import com.example.posthub.data.local.CommentEntity
 import com.example.posthub.data.remote.ApiService
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class CommentRepository(private val commentDao: CommentDao, private val apiService: ApiService) {
+@Singleton
+class CommentRepository @Inject constructor(private val commentDao: CommentDao, private val apiService: ApiService) {
 
-    fun getComments(postId: Int): LiveData<List<CommentEntity>> = commentDao.getComments(postId)
-
+    //get comments for server and insert into local database
     suspend fun refreshComments(postId: Int) {
         val commentsList = apiService.getCommentsForPost(postId).map {
             CommentEntity(it.id, it.postId, it.name, it.email, it.body)
@@ -16,8 +18,8 @@ class CommentRepository(private val commentDao: CommentDao, private val apiServi
         commentDao.insertComments(commentsList)
     }
 
-    // 根据 postId 获取评论
-    suspend fun fetchCommentsForPost(postId: Int): LiveData<List<CommentEntity>> {
+    // get comments from postId
+     fun fetchCommentsForPost(postId: Int): LiveData<List<CommentEntity>> {
         return commentDao.getComments(postId)
     }
 }

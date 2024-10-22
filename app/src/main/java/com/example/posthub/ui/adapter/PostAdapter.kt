@@ -8,16 +8,18 @@ import com.example.posthub.databinding.ItemPostBinding
 
 
 class PostAdapter(
-    private val postList: List<PostEntity>,
-    private val onItemClick: (PostEntity) -> Unit // onClick callback
+    private var postList: List<PostEntity>,
+    private var fullPostList: List<PostEntity>,
+    private val onItemClick: (PostEntity) -> Unit
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
-    inner class PostViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class PostViewHolder(private val binding: ItemPostBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(post: PostEntity) {
             binding.titleTextView.text = post.title
             binding.bodyTextView.text = post.body
 
-            // 设置点击监听器
+            // onItem click
             binding.root.setOnClickListener {
                 onItemClick(post) // 触发回调
             }
@@ -31,6 +33,19 @@ class PostAdapter(
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         holder.bind(postList[position])
+    }
+
+    fun filter(query: String) {
+        // If search view is empty return full list
+        postList = if (query.isEmpty()) {
+            fullPostList
+        } else {
+            // filter with title
+            fullPostList.filter { post ->
+                post.title.contains(query, ignoreCase = true)
+            }
+        }
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {

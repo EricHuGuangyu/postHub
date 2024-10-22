@@ -9,8 +9,10 @@ import androidx.room.Query
 @Dao
 interface PostDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPosts(posts: List<PostEntity>)
+    suspend fun insertPosts(posts:List<PostEntity>)
 
-    @Query("SELECT * FROM PostEntity")
+    @Query("SELECT * FROM posts")
     fun getPosts(): LiveData<List<PostEntity>>
 }
+
+

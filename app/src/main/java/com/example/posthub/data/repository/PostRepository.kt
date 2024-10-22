@@ -4,15 +4,16 @@ import androidx.lifecycle.LiveData
 import com.example.posthub.data.local.PostDao
 import com.example.posthub.data.local.PostEntity
 import com.example.posthub.data.remote.ApiService
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class PostRepository(private val postDao: PostDao, private val apiService: ApiService) {
+@Singleton
+class PostRepository @Inject constructor(private val postDao: PostDao, private val apiService: ApiService) {
 
-    val posts: LiveData<List<PostEntity>> = postDao.getPosts()
-
-    suspend fun refreshPosts() : List<PostEntity> {
+    //get posts for server and insert into local database
+    suspend fun refreshPosts() {
         val postList = apiService.getPosts().map { PostEntity(it.id, it.title, it.body) }
         postDao.insertPosts(postList)
-        return postList
     }
 
     // Get data from local database

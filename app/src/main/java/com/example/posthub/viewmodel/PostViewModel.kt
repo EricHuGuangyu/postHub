@@ -7,24 +7,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.posthub.data.local.PostEntity
 import com.example.posthub.data.repository.PostRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PostViewModel(private val repository: PostRepository) : ViewModel() {
-    //val posts: LiveData<List<PostEntity>> = repository.posts
-
+@HiltViewModel
+class PostViewModel @Inject constructor(private val repository: PostRepository) : ViewModel() {
     private val _posts = MutableLiveData<List<PostEntity>>()
     val posts: LiveData<List<PostEntity>> get() = _posts
 
     fun refreshPosts() {
         viewModelScope.launch {
             try {
-                // Get data from network and save to local storage
-                _posts.value = repository.refreshPosts()
-                // read data from local storage
-                val postList = repository.fetchPostsFromLocal()
-                //_posts.value = postList
+                // get data from server and store in local
+                repository.refreshPosts()
+                repository.fetchPostsFromLocal().observeForever { postList ->
+                    _posts.value = postList
+                }
             } catch (e: Exception) {
-                Log.e("PostViewModel", e.printStackTrace().toString())
+                Log.e("PostViewModel", "Error refreshing posts: ${e.message}")
             }
         }
     }
